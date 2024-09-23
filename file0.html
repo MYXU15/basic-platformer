@@ -1,0 +1,109 @@
+<html>
+<body>
+    <canvas id="gameCanvas" width="1000" height="300" ></canvas>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        var box={
+            boxX : 200,
+            boxY : 150,
+         boxSpeedX : 0,
+         boxSpeedY : 0,
+         gravity:0.5,
+         boxWidth:50,
+         boxHeight:50,
+         updateBoxPosition:function() {
+            this.boxX += this.boxSpeedX;
+            this.boxY += this.boxSpeedY;
+            this.boxSpeedY+=this.gravity;
+            if(this.boxY+this.boxHeight>canvas.height)
+            this.boxY=canvas.height-this.boxHeight;
+            if(this.boxX+this.boxWidth>canvas.width)
+            this.boxX=canvas.width-this.boxWidth
+        },
+        drawBox:function() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "black";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'white';
+            ctx.shadowColor = "white";
+            ctx.shadowBlur = 10;
+            ctx.fillRect(this.boxX, this.boxY, this.boxWidth, this.boxHeight);
+        },
+        move:function()
+        {
+            window.addEventListener('keydown', (e) => {
+            switch (e.key) {
+                case 'ArrowUp':
+                    this.boxSpeedY = -10;
+                    break;
+                case 'ArrowLeft':
+                    this.boxSpeedX = -10;
+                    break;
+                case 'ArrowRight':
+                    this.boxSpeedX = 10;
+                    break;
+            }
+        }),
+
+        window.addEventListener('keyup', () => {
+            this.boxSpeedX = 0;
+            //boxSpeedY = 0;
+        })
+    },
+    collide: function(obj)
+        {
+            var l1,l2,r1,r2,u1,u2,d1,d2;
+            l1=this.x;
+            r1=this.x+this.width;
+            t1=this.y;
+            d1=this.y+this.height;
+            l2=obj.x;
+            r2=obj.x+obj.width;
+            t2=obj.y;
+            d2=obj.y+obj.height;
+            if((d1<=t2) ||
+                (t1 >= d2) ||
+                (r1 <= l2) ||
+                (l1 >= r2))
+            {
+                alert('collided');
+                this.x=900; this.y=275;
+                location.reload();
+            }
+        },
+        }
+        
+        
+        var obstacle = {
+        x: 900,
+        y: 275,
+        width: 25,
+        height: 25,
+        speedX: -1, 
+        update: function() {
+        ctx.fillStyle = "red";
+        ctx.shadowBlur=10;
+        ctx.shadowColor="white";
+        ctx.fillRect(this.x, this.y, this.width, this.height);
+            },
+        
+        
+        };
+        function gameLoop() {
+            box.updateBoxPosition();
+            box.drawBox();
+            box.move();
+            obstacle.x += obstacle.speedX;
+            obstacle.update();
+            box.collide(obstacle);
+            requestAnimationFrame(gameLoop);
+        }
+
+        
+        requestAnimationFrame(gameLoop);
+    </script>
+</body>
+</html>
