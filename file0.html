@@ -1,0 +1,123 @@
+<html>
+  <body>
+    <canvas id="gameCanvas" width="1500" height="300"></canvas>
+    <script>
+      const canvas = document.getElementById('gameCanvas');
+      const ctx = canvas.getContext('2d');
+
+      // Player box
+      var box = {
+        boxX: 200,
+        boxY: 275,
+        boxSpeedX: 0,
+        boxSpeedY: 0,
+        gravity: 0.5,
+        boxWidth: 50,
+        boxHeight: 50,
+        updateBoxPosition: function() {
+          this.boxX += this.boxSpeedX;
+          this.boxY += this.boxSpeedY;
+          this.boxSpeedY += this.gravity;
+          if (this.boxY + this.boxHeight > canvas.height) 
+            this.boxY = canvas.height - this.boxHeight;
+          if (this.boxX + this.boxWidth > canvas.width) 
+            this.boxX = canvas.width - this.boxWidth;
+        },
+        drawBox: function() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.fillStyle = "black";
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.fillStyle = 'white';
+          ctx.shadowColor = "white";
+          ctx.shadowBlur = 10;
+          ctx.fillRect(this.boxX, this.boxY, this.boxWidth, this.boxHeight);
+        },
+        move: function() {
+          window.addEventListener('keydown', (e) => {
+            switch (e.keyCode) {
+              case 32:
+                this.boxSpeedY = -10;
+                break;
+              
+            }
+          });
+          window.addEventListener('keyup', () => {
+            this.boxSpeedX = 0;
+            //boxSpeedY = 0;
+          });
+        },
+      };
+
+      // Obstacle class
+      class Obstacle {
+  constructor(x, y, width, height, speedX) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.speedX = speedX;
+  }
+  update() {
+    ctx.fillStyle = "red";
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = "white";
+    ctx.fillRect(this.x, this.y, this.width, this.height);
+    this.x += this.speedX;
+    
+    // Reset obstacle position when reaching left or right edge
+    if (this.x + this.width < 0) {
+      this.x = canvas.width; // Move to right edge
+    } else if (this.x > canvas.width) {
+      this.x = -this.width; // Move to left edge
+    }
+  }
+}
+
+
+      // Create obstacles
+      var obstacles = [];
+      var gapMin = 300; // Minimum gap between obstacles
+      var gapMax = 800; // Maximum gap between obstacles
+      var x=0;
+      for (let i = 0; i < 1; i++) {
+        x+= gapMin + Math.random() * (gapMax - gapMin);
+
+        obstacles.push(new Obstacle(
+            x,
+         // 900,  
+          275,
+          25,
+          25,
+          -10 // Random speed between -2.5 and 2.5
+        ));
+      }
+
+      function checkCollision() {
+        for (let obstacle of obstacles) {
+          if (
+            box.boxX < obstacle.x + obstacle.width &&
+            box.boxX + box.boxWidth > obstacle.x &&
+            box.boxY < obstacle.y + obstacle.height &&
+            box.boxY + box.boxHeight > obstacle.y
+          ) {
+            alert('Collision detected!');
+            
+          }
+        }
+      }
+
+      function gameLoop() {
+        box.updateBoxPosition();
+        box.drawBox();
+        box.move();
+        for (let obstacle of obstacles) {
+          obstacle.update();
+        }
+        checkCollision();
+        requestAnimationFrame(gameLoop);
+      }
+
+      requestAnimationFrame(gameLoop);
+    </script>
+  </body>
+</html>
