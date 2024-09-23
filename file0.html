@@ -4,8 +4,6 @@
     <script>
       const canvas = document.getElementById('gameCanvas');
       const ctx = canvas.getContext('2d');
-
-      // Player box
       var box = {
         boxX: 200,
         boxY: 275,
@@ -43,12 +41,10 @@
           });
           window.addEventListener('keyup', () => {
             this.boxSpeedX = 0;
-            //boxSpeedY = 0;
           });
         },
       };
 
-      // Obstacle class
       class Obstacle {
   constructor(x, y, width, height, speedX) {
     this.x = x;
@@ -64,20 +60,16 @@
     ctx.fillRect(this.x, this.y, this.width, this.height);
     this.x += this.speedX;
     
-    // Reset obstacle position when reaching left or right edge
-    if (this.x + this.width < 0) {
-      this.x = canvas.width; // Move to right edge
+   if (this.x + this.width < 0) {
+      this.x = canvas.width;
     } else if (this.x > canvas.width) {
-      this.x = -this.width; // Move to left edge
+      this.x = -this.width; 
     }
   }
 }
-
-
-      // Create obstacles
-      var obstacles = [];
-      var gapMin = 300; // Minimum gap between obstacles
-      var gapMax = 800; // Maximum gap between obstacles
+     var obstacles = [];
+      var gapMin = 300;
+      var gapMax = 800;
       var x=0;
       for (let i = 0; i < 1; i++) {
         x+= gapMin + Math.random() * (gapMax - gapMin);
@@ -88,7 +80,7 @@
           275,
           25,
           25,
-          -10 // Random speed between -2.5 and 2.5
+          -10
         ));
       }
 
